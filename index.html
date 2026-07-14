@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 6/45 번호 생성기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>로또 6/45</h1>
+        <p class="subtitle">행운의 번호를 뽑아보세요!</p>
+
+        <div class="balls" id="balls"></div>
+
+        <button class="btn" id="generateBtn" onclick="generate()">번호 생성</button>
+
+        <div class="history" id="historySection" style="display:none;">
+            <h3>이전 번호</h3>
+            <div id="history"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
