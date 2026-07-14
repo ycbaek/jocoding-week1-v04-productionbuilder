@@ -1,94 +1,131 @@
-const lottoHistory = [];
-let isDrawing = false;
+const MENUS = [
+    { name: '김치찌개',     emoji: '🍲', category: '한식' },
+    { name: '된장찌개',     emoji: '🥘', category: '한식' },
+    { name: '비빔밥',       emoji: '🍚', category: '한식' },
+    { name: '삼겹살',       emoji: '🥓', category: '한식' },
+    { name: '제육볶음',     emoji: '🐷', category: '한식' },
+    { name: '순두부찌개',   emoji: '🌶️', category: '한식' },
+    { name: '냉면',         emoji: '🥶', category: '한식' },
+    { name: '짜장면',       emoji: '🍜', category: '중식' },
+    { name: '짬뽕',         emoji: '🍲', category: '중식' },
+    { name: '탕수육',       emoji: '🍖', category: '중식' },
+    { name: '마라탕',       emoji: '🥵', category: '중식' },
+    { name: '볶음밥',       emoji: '🍳', category: '중식' },
+    { name: '초밥',         emoji: '🍣', category: '일식' },
+    { name: '라멘',         emoji: '🍜', category: '일식' },
+    { name: '돈카츠',       emoji: '🍤', category: '일식' },
+    { name: '규동',         emoji: '🍱', category: '일식' },
+    { name: '우동',         emoji: '🍲', category: '일식' },
+    { name: '파스타',       emoji: '🍝', category: '양식' },
+    { name: '피자',         emoji: '🍕', category: '양식' },
+    { name: '햄버거',       emoji: '🍔', category: '양식' },
+    { name: '스테이크',     emoji: '🥩', category: '양식' },
+    { name: '샐러드',       emoji: '🥗', category: '양식' },
+    { name: '떡볶이',       emoji: '🌶️', category: '분식' },
+    { name: '김밥',         emoji: '🍙', category: '분식' },
+    { name: '라면',         emoji: '🍜', category: '분식' },
+    { name: '순대',         emoji: '🍢', category: '분식' },
+    { name: '쌀국수',       emoji: '🍲', category: '아시안' },
+    { name: '팟타이',       emoji: '🍤', category: '아시안' },
+    { name: '카레',         emoji: '🍛', category: '아시안' },
+    { name: '분짜',         emoji: '🥢', category: '아시안' },
+];
+
+const CATEGORIES = ['전체', '한식', '중식', '일식', '양식', '분식', '아시안'];
+
+const history = [];
+let selectedCategory = '전체';
+let isPicking = false;
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-function getColorClass(num) {
-    if (num <= 10) return 'range-1';
-    if (num <= 20) return 'range-10';
-    if (num <= 30) return 'range-20';
-    if (num <= 40) return 'range-30';
-    return 'range-40';
+function getCategoryClass(category) {
+    switch (category) {
+        case '한식':   return 'cat-korean';
+        case '중식':   return 'cat-chinese';
+        case '일식':   return 'cat-japanese';
+        case '양식':   return 'cat-western';
+        case '분식':   return 'cat-snack';
+        default:       return 'cat-asian';
+    }
 }
 
-async function generate() {
-    if (isDrawing) return;
-    isDrawing = true;
+function getCandidates() {
+    if (selectedCategory === '전체') return MENUS;
+    return MENUS.filter(menu => menu.category === selectedCategory);
+}
 
-    const btn = document.getElementById('generateBtn');
-    if (btn) {
-        btn.disabled = true;
-        btn.classList.add('disabled');
-        btn.textContent = '번호 추첨 중...';
-    }
-
-    const numbers = [];
-    while (numbers.length < 6) {
-        const n = Math.floor(Math.random() * 45) + 1;
-        if (!numbers.includes(n)) numbers.push(n);
-    }
-    numbers.sort((a, b) => a - b);
-
-    const ballsEl = document.getElementById('balls');
-    
-    // Render 6 placeholders first
-    ballsEl.innerHTML = Array(6).fill(0).map(() => 
-        `<div class="ball placeholder">?</div>`
+function renderCategories() {
+    document.getElementById('categories').innerHTML = CATEGORIES.map(cat =>
+        `<button class="chip ${cat === selectedCategory ? 'active' : ''}"
+                 onclick="selectCategory('${cat}')">${cat}</button>`
     ).join('');
+}
 
-    const ballElements = ballsEl.querySelectorAll('.ball');
+function selectCategory(category) {
+    if (isPicking) return;
+    selectedCategory = category;
+    renderCategories();
+}
 
-    for (let i = 0; i < 6; i++) {
-        const finalVal = numbers[i];
-        const ballEl = ballElements[i];
-        
-        // Let's make it roll
-        const rollDuration = 500; // 0.5s roll
-        const rollInterval = 50;
-        const steps = rollDuration / rollInterval;
-        
-        ballEl.classList.remove('placeholder');
-        ballEl.classList.add('rolling');
-        
-        for (let s = 0; s < steps; s++) {
-            const tempVal = Math.floor(Math.random() * 45) + 1;
-            ballEl.textContent = tempVal;
-            await delay(rollInterval);
-        }
-        
-        ballEl.classList.remove('rolling');
-        ballEl.textContent = finalVal;
-        ballEl.classList.add(getColorClass(finalVal));
-        ballEl.classList.add('reveal');
-        
-        // Wait 300ms before starting the next ball
-        await delay(300);
+function renderMenu(menu, extraClass = '') {
+    const cardEl = document.getElementById('menuCard');
+    cardEl.className = `menu-card ${getCategoryClass(menu.category)} ${extraClass}`;
+    cardEl.innerHTML = `
+        <div class="menu-emoji">${menu.emoji}</div>
+        <div class="menu-name">${menu.name}</div>
+        <div class="menu-category">${menu.category}</div>
+    `;
+}
+
+async function recommend() {
+    if (isPicking) return;
+    isPicking = true;
+
+    const btn = document.getElementById('recommendBtn');
+    btn.disabled = true;
+    btn.classList.add('disabled');
+    btn.textContent = '고르는 중...';
+
+    const candidates = getCandidates();
+    const picked = candidates[Math.floor(Math.random() * candidates.length)];
+
+    // Spin through random candidates before locking in the pick.
+    const rollDuration = 1200;
+    const rollInterval = 80;
+    const steps = rollDuration / rollInterval;
+
+    for (let s = 0; s < steps; s++) {
+        const temp = candidates[Math.floor(Math.random() * candidates.length)];
+        renderMenu(temp, 'rolling');
+        await delay(rollInterval);
     }
 
-    lottoHistory.unshift(numbers);
-    if (lottoHistory.length > 6) lottoHistory.pop();
+    renderMenu(picked, 'reveal');
+
+    history.unshift(picked);
+    if (history.length > 6) history.pop();
     renderHistory();
 
-    if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('disabled');
-        btn.textContent = '번호 생성';
-    }
-    isDrawing = false;
+    btn.disabled = false;
+    btn.classList.remove('disabled');
+    btn.textContent = '메뉴 추천';
+    isPicking = false;
 }
 
 function renderHistory() {
-    if (lottoHistory.length <= 1) {
+    if (history.length <= 1) {
         document.getElementById('historySection').style.display = 'none';
         return;
     }
     document.getElementById('historySection').style.display = 'block';
-    document.getElementById('history').innerHTML = lottoHistory.slice(1).map(nums =>
-        `<div class="history-item">${nums.map(n =>
-            `<div class="history-ball ${getColorClass(n)}">${n}</div>`
-        ).join('')}</div>`
+    document.getElementById('history').innerHTML = history.slice(1).map(menu =>
+        `<div class="history-item ${getCategoryClass(menu.category)}">
+            <span>${menu.emoji}</span>
+            <span>${menu.name}</span>
+        </div>`
     ).join('');
 }
 
-generate();
-
+renderCategories();
+recommend();

@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로또 6/45 번호 생성기</title>
+    <title>오늘 점심 뭐 먹지?</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>로또 6/45</h1>
-        <p class="subtitle">행운의 번호를 뽑아보세요!</p>
+        <h1>오늘 점심 뭐 먹지?</h1>
+        <p class="subtitle">고민하지 말고 뽑으세요!</p>
 
-        <div class="balls" id="balls"></div>
+        <div class="categories" id="categories"></div>
 
-        <button class="btn" id="generateBtn" onclick="generate()">번호 생성</button>
+        <div class="menu-card" id="menuCard"></div>
+
+        <button class="btn" id="recommendBtn" onclick="recommend()">메뉴 추천</button>
 
         <div class="history" id="historySection" style="display:none;">
-            <h3>이전 번호</h3>
+            <h3>최근 추천</h3>
             <div id="history"></div>
         </div>
     </div>
