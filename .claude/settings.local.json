@@ -3,7 +3,11 @@
     "allow": [
       "Bash(open:*)",
       "Bash(python3 -m http.server 8000)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "Bash(git credential *)",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
