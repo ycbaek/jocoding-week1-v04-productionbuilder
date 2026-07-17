@@ -21,6 +21,20 @@
             <h3>최근 추천</h3>
             <div id="history"></div>
         </div>
+
+        <div class="request">
+            <h3>메뉴 추가 요청</h3>
+            <p class="request-desc">먹고 싶은 메뉴가 없나요? 알려주세요!</p>
+
+            <form id="requestForm" action="https://formspree.io/f/mvzekkvj" method="POST">
+                <input type="email" name="email" placeholder="이메일 (답장 받을 주소)" required>
+                <input type="text" name="menu" placeholder="추가하고 싶은 메뉴" required>
+                <textarea name="message" rows="3" placeholder="하고 싶은 말 (선택)"></textarea>
+                <button type="submit" class="btn btn-secondary" id="requestBtn">요청 보내기</button>
+            </form>
+
+            <p class="form-status" id="formStatus"></p>
+        </div>
     </div>
 
     <script src="script.js"></script>

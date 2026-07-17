@@ -127,5 +127,43 @@ function renderHistory() {
     ).join('');
 }
 
+// Submit the request form to Formspree via fetch so the page never navigates away.
+async function submitRequest(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const btn = document.getElementById('requestBtn');
+    const status = document.getElementById('formStatus');
+
+    btn.disabled = true;
+    btn.classList.add('disabled');
+    btn.textContent = '보내는 중...';
+    status.textContent = '';
+    status.className = 'form-status';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { Accept: 'application/json' },
+        });
+
+        if (!response.ok) throw new Error('Formspree returned ' + response.status);
+
+        form.reset();
+        status.textContent = '요청이 전송되었습니다. 감사합니다!';
+        status.classList.add('success');
+    } catch (err) {
+        status.textContent = '전송에 실패했습니다. 잠시 후 다시 시도해 주세요.';
+        status.classList.add('error');
+    }
+
+    btn.disabled = false;
+    btn.classList.remove('disabled');
+    btn.textContent = '요청 보내기';
+}
+
+document.getElementById('requestForm').addEventListener('submit', submitRequest);
+
 renderCategories();
 recommend();
