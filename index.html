@@ -22,6 +22,24 @@
             <div id="history"></div>
         </div>
 
+        <div class="classifier">
+            <h3>고양이 vs 강아지 판별</h3>
+            <p class="classifier-desc">동물 사진을 올리면 AI가 판별해요</p>
+
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-hint" id="dropHint">
+                    <span class="accent">사진을 선택</span>하거나 여기로 끌어다 놓으세요<br>
+                    <small>JPG · PNG · GIF</small>
+                </div>
+                <img id="preview" alt="업로드한 이미지 미리보기">
+            </div>
+
+            <input type="file" id="fileInput" accept="image/*" hidden>
+
+            <div class="classifier-status" id="classifierStatus">모델을 불러오는 중...</div>
+            <div class="results" id="results"></div>
+        </div>
+
         <div class="request">
             <h3>메뉴 추가 요청</h3>
             <p class="request-desc">먹고 싶은 메뉴가 없나요? 알려주세요!</p>
@@ -37,6 +55,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -253,3 +253,118 @@ h1 {
 
 .form-status.success { color: #4cd137; }
 .form-status.error   { color: #e94560; }
+
+.classifier {
+    margin: 48px auto 0;
+    padding-top: 36px;
+    max-width: 420px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #a0a0b0;
+}
+
+.classifier h3 {
+    color: #fff;
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+}
+
+.classifier-desc {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    padding: 28px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+    border-color: #e94560;
+    background: rgba(233, 69, 96, 0.08);
+}
+
+.dropzone-hint {
+    color: #c8c8d8;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.dropzone-hint .accent { color: #e94560; font-weight: 600; }
+.dropzone-hint small { color: #7a7a8c; font-size: 0.85rem; }
+
+#preview {
+    display: none;
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+.classifier-status {
+    margin-top: 18px;
+    min-height: 1.4em;
+    font-size: 0.95rem;
+}
+.classifier-status.error { color: #e94560; }
+
+.results {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.result-row {
+    text-align: left;
+}
+
+.result-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.result-label {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.result-label .badge {
+    margin-left: 8px;
+    font-size: 0.75rem;
+    padding: 2px 10px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #e94560, #c23616);
+}
+
+.result-pct {
+    color: #c8c8d8;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+.bar-track {
+    height: 12px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #9c88ff, #8c7ae6);
+    transition: width 0.4s ease;
+}
+
+.bar-fill.top {
+    background: linear-gradient(135deg, #e94560, #c23616);
+}

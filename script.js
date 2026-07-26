@@ -165,5 +165,103 @@ async function submitRequest(event) {
 
 document.getElementById('requestForm').addEventListener('submit', submitRequest);
 
+// --- Cat/dog image classifier (Teachable Machine) ---
+const CLASSIFIER_MODEL_URL = 'https://teachablemachine.withgoogle.com/models/293SgEtQ9/';
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const dropHint = document.getElementById('dropHint');
+const classifierStatus = document.getElementById('classifierStatus');
+const resultsEl = document.getElementById('results');
+
+let classifierModel = null;
+
+function setClassifierStatus(text, isError = false) {
+    classifierStatus.textContent = text;
+    classifierStatus.classList.toggle('error', isError);
+}
+
+// Load the model up front so the first prediction is instant.
+async function loadClassifier() {
+    try {
+        classifierModel = await tmImage.load(
+            CLASSIFIER_MODEL_URL + 'model.json',
+            CLASSIFIER_MODEL_URL + 'metadata.json'
+        );
+        setClassifierStatus('사진을 올려보세요!');
+    } catch (err) {
+        setClassifierStatus('모델을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.', true);
+    }
+}
+
+// Run the image through the model and render a sorted bar per class.
+async function classify() {
+    if (!classifierModel) return;
+    setClassifierStatus('판별 중...');
+
+    const predictions = await classifierModel.predict(preview);
+    predictions.sort((a, b) => b.probability - a.probability);
+
+    resultsEl.innerHTML = predictions.map((p, i) => {
+        const pct = (p.probability * 100).toFixed(1);
+        const topClass = i === 0 ? 'top' : '';
+        const badge = i === 0 ? '<span class="badge">가장 유력</span>' : '';
+        return `
+            <div class="result-row">
+                <div class="result-head">
+                    <span class="result-label">${p.className}${badge}</span>
+                    <span class="result-pct">${pct}%</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill ${topClass}" style="width:${pct}%"></div>
+                </div>
+            </div>`;
+    }).join('');
+
+    const best = predictions[0];
+    setClassifierStatus(`이 사진은 "${best.className}" 같아요 (${(best.probability * 100).toFixed(0)}%)`);
+}
+
+function handleClassifierFile(file) {
+    if (!classifierModel) return;
+    if (!file || !file.type.startsWith('image/')) {
+        setClassifierStatus('이미지 파일을 올려주세요.', true);
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        preview.onload = classify;
+        preview.src = reader.result;
+        preview.style.display = 'block';
+        dropHint.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+dropzone.addEventListener('click', () => classifierModel && fileInput.click());
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleClassifierFile(e.target.files[0]);
+});
+
+['dragenter', 'dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+    })
+);
+['dragleave', 'drop'].forEach(evt =>
+    dropzone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+    })
+);
+dropzone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files[0]) handleClassifierFile(e.dataTransfer.files[0]);
+});
+
+loadClassifier();
+
 renderCategories();
 recommend();
